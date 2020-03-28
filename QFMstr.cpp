@@ -859,36 +859,63 @@ taxa* FM(taxa* t, quartet* q)
 	
 		Qt = q;
 		while(Qt->qnext!=NULL)
-		{	
-			Qt  = Qt->qnext;
-			Qtemp = q;
-			tag = 0;
-			while(Qtemp->qnext!=NULL)
-			{	m = 0; n = 0;
-				Qtemp = Qtemp->qnext;
-				if(Qt->quartet_id == Qtemp->quartet_id) continue;
-				if(!(Qt->q1.compare(Qtemp->q1)||Qt->q2.compare(Qtemp->q2)))m++;
-				else if(!(Qt->q1.compare(Qtemp->q2)||Qt->q2.compare(Qtemp->q1)))m++;
-				else if(!(Qt->q1.compare(Qtemp->q3)||Qt->q2.compare(Qtemp->q4)))m++;
-				else if(!(Qt->q1.compare(Qtemp->q4)||Qt->q2.compare(Qtemp->q3)))m++;
+        {
+            //Qtemp = Qt->qnext;
+            Qt  = Qt->qnext;
+            Qtemp = Qt;
+            //tag = 0;
+            while(Qtemp->qnext!=NULL)
+            {	m = 0; n = 0;
+                Qtemp = Qtemp->qnext;
+                if(Qt->quartet_id == Qtemp->quartet_id) continue;
+                //this following code will reduce counting space
+                if(!(Qt->q1.compare(Qtemp->q1)||Qt->q2.compare(Qtemp->q2))){
+                    m++;
+                    if(!(Qt->q3.compare(Qtemp->q3)||Qt->q4.compare(Qtemp->q4)))n++;
+                    else if(!(Qt->q3.compare(Qtemp->q4)||Qt->q4.compare(Qtemp->q3)))n++;
 
-			
-				if(!(Qt->q3.compare(Qtemp->q1)||Qt->q4.compare(Qtemp->q2)))n++;
-				else if(!(Qt->q3.compare(Qtemp->q2)||Qt->q4.compare(Qtemp->q1)))n++;
-				else if(!(Qt->q3.compare(Qtemp->q3)||Qt->q4.compare(Qtemp->q4)))n++;
-				else if(!(Qt->q3.compare(Qtemp->q4)||Qt->q4.compare(Qtemp->q3)))n++;
+                }
+                else if(!(Qt->q1.compare(Qtemp->q2)||Qt->q2.compare(Qtemp->q1))){
+                    m++;
+                    if(!(Qt->q3.compare(Qtemp->q3)||Qt->q4.compare(Qtemp->q4)))n++;
+                    else if(!(Qt->q3.compare(Qtemp->q4)||Qt->q4.compare(Qtemp->q3)))n++;
 
-				if(n>0&&m>0)
-				{
-					Qtemp->my_count++;
-					tag++;
-					//Qt->my_count++;
-				}
-			
-		
-			}
-			if(tag!=0)Qt->my_count++;
-		}
+                }
+                else if(!(Qt->q1.compare(Qtemp->q3)||Qt->q2.compare(Qtemp->q4))){
+                    m++;
+                    if(!(Qt->q3.compare(Qtemp->q1)||Qt->q4.compare(Qtemp->q2)))n++;
+                    else if(!(Qt->q3.compare(Qtemp->q2)||Qt->q4.compare(Qtemp->q1)))n++;
+
+                }
+                else if(!(Qt->q1.compare(Qtemp->q4)||Qt->q2.compare(Qtemp->q3))){
+                    m++;
+                    if(!(Qt->q3.compare(Qtemp->q1)||Qt->q4.compare(Qtemp->q2)))n++;
+                    else if(!(Qt->q3.compare(Qtemp->q2)||Qt->q4.compare(Qtemp->q1)))n++;
+
+                }
+
+
+//                if(!(Qt->q3.compare(Qtemp->q1)||Qt->q4.compare(Qtemp->q2)))n++;
+//                else if(!(Qt->q3.compare(Qtemp->q2)||Qt->q4.compare(Qtemp->q1)))n++;
+//                else if(!(Qt->q3.compare(Qtemp->q3)||Qt->q4.compare(Qtemp->q4)))n++;
+//                else if(!(Qt->q3.compare(Qtemp->q4)||Qt->q4.compare(Qtemp->q3)))n++;
+
+                if(n>0&&m>0)
+                {
+                    Qtemp->my_count++;
+                   // tag++;
+
+                    Qt->my_count++;
+                }
+
+
+            }
+//            if(tag!=0)Qt->my_count++;
+//            cout<<"tag= "<<tag<<endl;
+            //Qt->my_count = tag+1;
+
+        }
+
 		// sort q by count
 		//Qt = q;
 		tag  = 1;
