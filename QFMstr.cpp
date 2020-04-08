@@ -2500,7 +2500,7 @@ int main(int argc, char *argv[])
 	cout<<"Total No. of Satisfied Quartets = "<<l<<endl;*/
 	//cout << "Running Time : " << (double) (ends - start) / CLOCKS_PER_SEC <<" seconds" <<endl;
 	//cout<< "Running Time: "<<diff<<" seconds "<<endl;
-	
+	fclose(stdout);
 	
 	return 0;
 }
