@@ -528,7 +528,7 @@ taxa* FM_Algo(taxa* partA, taxa* partB, quartet* q)
 			int maxsat = 0;
 			int glPart = 0;
 			int randnum = 0;
-			long int maxdiff = -100000000000, tempdiff;
+			long long int maxdiff = -100000000000, tempdiff;
 			double maxratio = 0, tempratio = 0; // d/v
 			double maxratio1 = 0, tempratio1 = 0; // s/d
 			int nextQ = 0, c1=0, c2=0;
@@ -1078,6 +1078,250 @@ taxa* FM(taxa* t, quartet* q)
 //{
 
 //}
+void readQuartetsQMC_format()
+{
+    int count = 0, sk1,sk2,sk3,sk4, tcount=0;
+    quartet *temp, *loq, *Qtemp;
+    taxa *tax,*lot, *l;
+    lot = listOftaxa;
+    string qt;
+    int found;
+    char buffer[100];
+    int length, len, start = 2;
+
+
+    loq = listOfquartet; // first element dummy listOfquartet->qnext == 1st quartet
+    //cin>>n; // no. of input quartets
+
+    cin >> qt;
+    while(!qt.empty()){
+        //cout << qt<<endl;
+
+        //count++;
+        start = 0;
+        //	cout<<"Quartet "<<count<<endl;
+        temp = new quartet();
+        //temp->quartet_id = count;
+        //cin >> qt;
+        found=qt.find(',');
+        //cout<<"found="<<found<<endl;
+        len = found - start;
+        //cout<<"len="<<len<<endl;
+        length=qt.copy(buffer,len,start);
+        //cout<<"length="<<length<<endl;
+        buffer[length]='\0';
+        temp->q1.assign(buffer);
+        if(!temp->q1.compare("0"))
+            temp->q1.assign("O");
+        //cout<<"q1="<<temp->q1<<endl;
+
+        //cout << qt<<endl;
+
+        start = found + 1;
+        found=qt.find('|');
+        len = found - start;
+        length=qt.copy(buffer,len,start);
+        buffer[length]='\0';
+        temp->q2.assign(buffer);
+        if(!temp->q2.compare("0"))
+            temp->q2.assign("O");
+        try{
+            qt.assign(qt.replace(0,found+1,""));
+        }
+        catch (out_of_range &oor) {
+            cerr << "Out of Range error: " << oor.what() << endl;
+        }
+        //cout<<"q2="<<temp->q2<<endl;
+        //
+        //cout << qt<<endl;
+
+        start = 0;
+        found = qt.find(',');
+        //cout<<"found="<<found<<endl;
+        len = found - start;
+        //cout<<"len="<<len<<endl;
+        length=qt.copy(buffer,len,start);
+        //cout<<"length="<<length<<endl;
+        buffer[length]='\0';
+        temp->q3.assign(buffer);
+        if(!temp->q3.compare("0"))
+            temp->q3.assign("O");
+        try{
+            qt.assign(qt.replace(0,found+1,""));
+        }
+        catch (out_of_range &oor) {
+            cerr << "Out of Range error: " << oor.what() << endl;
+        }
+        //cout<<"q3="<<temp->q3<<endl;
+        //cout << qt<<endl;
+
+        // temp->q4.assign(qt);
+        start = 0;
+        found = qt.find(':');
+        len = found - start;
+        length=qt.copy(buffer,len,start);
+        buffer[length]='\0';
+        temp->q4.assign(buffer);
+        if(!temp->q4.compare("0"))
+            temp->q4.assign("O");
+        //cout<<"q4="<<temp->q4<<endl;
+        //cout << qt<<endl;
+        try{
+            qt.assign(qt.replace(0,found+1,""));
+        }
+        catch (out_of_range &oor) {
+            cerr << "Out of Range error: " << oor.what() << endl;
+        }
+        Qtemp = listOfquartet;
+        int avail = 0;
+        while(Qtemp->qnext!=NULL)
+        {
+            avail = 0;
+            Qtemp = Qtemp->qnext;
+//            if(temp->q2.compare(Qtemp->q1) && temp->q2.compare(Qtemp->q2) &&
+//                temp->q2.compare(Qtemp->q3) && temp->q2.compare(Qtemp->q4))
+//                continue;
+
+            if(!(temp->q1.compare(Qtemp->q1)||temp->q2.compare(Qtemp->q2))){
+
+                if(!(temp->q3.compare(Qtemp->q3)||temp->q4.compare(Qtemp->q4))){
+                    avail++; Qtemp->my_count++; break;}
+                else if(!(temp->q3.compare(Qtemp->q4)||temp->q4.compare(Qtemp->q3))){
+                    avail++; Qtemp->my_count++;break;}
+
+            }
+            else if(!(temp->q1.compare(Qtemp->q2)||temp->q2.compare(Qtemp->q1))){
+
+                if(!(temp->q3.compare(Qtemp->q3)||temp->q4.compare(Qtemp->q4))){
+                    avail++;  Qtemp->my_count++; break;}
+                else if(!(temp->q3.compare(Qtemp->q4)||temp->q4.compare(Qtemp->q3))){
+                    avail++;  Qtemp->my_count++; break;}
+
+            }
+            else if(!(temp->q1.compare(Qtemp->q3)||temp->q2.compare(Qtemp->q4))){
+
+                if(!(temp->q3.compare(Qtemp->q1)||temp->q4.compare(Qtemp->q2))){
+                    avail++; Qtemp->my_count++; break;}
+                else if(!(temp->q3.compare(Qtemp->q2)||temp->q4.compare(Qtemp->q1))){
+                    avail++; Qtemp->my_count++; break;}
+
+            }
+            else if(!(temp->q1.compare(Qtemp->q4)||temp->q2.compare(Qtemp->q3))){
+
+                if(!(temp->q3.compare(Qtemp->q1)||temp->q4.compare(Qtemp->q2))){
+                    avail++;  Qtemp->my_count++; break;}
+                else if(!(temp->q3.compare(Qtemp->q2)||temp->q4.compare(Qtemp->q1))){
+                    avail++;  Qtemp->my_count++; break;}
+
+            }
+//            if(!(temp->q1.compare(Qtemp->q1))){
+//                if(!(temp->q2.compare(Qtemp->q2))){
+//                    if(!(temp->q3.compare(Qtemp->q3)||temp->q4.compare(Qtemp->q4))){
+//                        avail++; Qtemp->my_count++; break;}
+//                    else if(!(temp->q3.compare(Qtemp->q4)||temp->q4.compare(Qtemp->q3))){
+//                        avail++; Qtemp->my_count++;break;}
+//                }
+//            }
+//            else if(!(temp->q1.compare(Qtemp->q2))){
+//                if(!(temp->q2.compare(Qtemp->q1))){
+//                    if(!(temp->q3.compare(Qtemp->q3)||temp->q4.compare(Qtemp->q4))){
+//                        avail++;  Qtemp->my_count++; break;}
+//                    else if(!(temp->q3.compare(Qtemp->q4)||temp->q4.compare(Qtemp->q3))){
+//                        avail++;  Qtemp->my_count++; break;}
+//                }
+//            }
+//            else if(!(temp->q1.compare(Qtemp->q3))){
+//                if(!(temp->q2.compare(Qtemp->q4))){
+//                    if(!(temp->q3.compare(Qtemp->q1)||temp->q4.compare(Qtemp->q2))){
+//                        avail++; Qtemp->my_count++; break;}
+//                    else if(!(temp->q3.compare(Qtemp->q2)||temp->q4.compare(Qtemp->q1))){
+//                        avail++; Qtemp->my_count++; break;}
+//                }
+//            }
+//            else if(!(temp->q1.compare(Qtemp->q4))){
+//                if(!(temp->q2.compare(Qtemp->q3))){
+//                    if(!(temp->q3.compare(Qtemp->q1)||temp->q4.compare(Qtemp->q2))){
+//                        avail++;  Qtemp->my_count++; break;}
+//                    else if(!(temp->q3.compare(Qtemp->q2)||temp->q4.compare(Qtemp->q1))){
+//                        avail++;  Qtemp->my_count++; break;}
+//                }
+//            }
+
+
+
+        }
+
+        if (avail == 0) {
+            count++;
+            temp->quartet_id = count;
+            loq->qnext = temp;
+            loq = loq->qnext;
+
+            sk1 = 0;
+            sk2 = 0;
+            sk3 = 0;
+            sk4 = 0;
+            l = listOftaxa;
+            while (l != NULL) {
+                if (l->name.compare(temp->q1) == 0) sk1 = 1;
+                else if (l->name.compare(temp->q2) == 0) sk2 = 1;
+                else if (l->name.compare(temp->q3) == 0) sk3 = 1;
+                else if (l->name.compare(temp->q4) == 0) sk4 = 1;
+                else { ; }
+                l = l->tnext;
+            }
+
+            if (sk1 == 0) {
+                tax = new taxa();
+                tcount++;
+                tax->name.assign(temp->q1);
+                /*	list *ql, *qlp;
+                    ql = new list();
+                    ql->val = temp->quartet_id;
+                    qlp = tax->quartet_list;
+                    while(qlp->next!=NULL)qlp = qlp->next;
+                    qlp->next = ql;
+
+                    tax->quartet_list = */
+                lot->tnext = tax;
+                lot = lot->tnext;
+            }
+            if (sk2 == 0) {
+                tax = new taxa();
+                tcount++;
+                tax->name.assign(temp->q2);
+                lot->tnext = tax;
+                lot = lot->tnext;
+            }
+            if (sk3 == 0) {
+                tax = new taxa();
+                tcount++;
+                tax->name.assign(temp->q3);
+                lot->tnext = tax;
+                lot = lot->tnext;
+            }
+            if (sk4 == 0) {
+                tax = new taxa();
+                tcount++;
+                tax->name.assign(temp->q4);
+                lot->tnext = tax;
+                lot = lot->tnext;
+            }
+        }
+
+        qt = "";
+        cin >> qt;
+    }
+    printPartition(listOftaxa,lot);
+    cout<<"Total number of unique quartet = "<< count << endl;
+    cout<<"Total number of taxa = "<< tcount << endl;
+    /*freopen( "tcount.txt", "w", stdout );
+    cout<<tcount;
+    fclose(stdout);*/
+
+
+    //populate taxa list here
+}
 void readQuartets()
 {
 	int count = 0, sk1,sk2,sk3,sk4, tcount=0;
@@ -2215,8 +2459,8 @@ int main(int argc, char *argv[])
 	
 
 	
-	
-	readQuartets();
+	//readQuartetsQMC_format();//uncomment it if you want to use Quartet of QMC format
+	readQuartets(); //use this line if u wanna use newick quartet
 	fclose(stdin);
 	
 
