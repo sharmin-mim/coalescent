@@ -234,105 +234,105 @@ int Check_Quartet(taxa* partA, taxa* partB, quartet *q, string tempTaxa )
 }
 double Calculate_Score(taxa *parta, taxa *partb, quartet *qt, string tempTaxa, int st, int vt, int df)
 {
-	int partitionScore, qscore;
-	double dps, dps1;
-	quartet *q;
-	int s, v,l,d;
-	s = 0; v = 0; d = 0;
-	char c;
-	double p;
+    int partitionScore, qscore;
+    double dps, dps1;
+    quartet *q;
+    int s, v,l,d;
+    s = 0; v = 0; d = 0;
+    char c;
+    double p;
 
-	//p=(n-Satisfied)/n;
+    //p=(n-Satisfied)/n;
 
 //	cout<<"Start of calcscore\n";
-	q = qt->qnext;
+    q = qt->qnext;
 
-	partitionScore = 0;
-	
-	while(q!= NULL){
-		if(!tempTaxa.compare("NULL"))
-		{
-			q->status.assign("");
-			qscore  = Check_Quartet(parta, partb, q, tempTaxa); 
-			if(qscore == 6) s++;
-			else if(qscore == 2) v++;
-			else if(qscore == 3) d++;
-		}
-		else if(!(q->q1.compare(tempTaxa)&&q->q2.compare(tempTaxa)&&q->q3.compare(tempTaxa)&&q->q4.compare(tempTaxa)))
-		{	qscore  = Check_Quartet(parta, partb, q, tempTaxa); 
-			//l = q->status.length();		
-			c = q->status[0];
-			//cout<<"c = "<<c<<endl;
-			//  s s,  v v,  d d, s v, s d, v s, v d, d v , d s
-			if(c=='s' && qscore == 2) { s--; v++; } // s v
-					
-			else if(c=='s' && qscore==3){ s--; d++;} // s d
-					
-			else if(c=='v' && qscore == 6){v--; s++;} // v s		
-					
-			else if(c=='v' && qscore==3){v--;d++;}  // v d
+    partitionScore = 0;
 
-			else if(c=='d' && qscore==2){d--;v++;} // d v 
+    while(q!= NULL){
+        if(!tempTaxa.compare("NULL"))
+        {
+            q->status.assign("");
+            qscore  = Check_Quartet(parta, partb, q, tempTaxa);
+            if(qscore == 6) s = s + q->my_count;
+            else if(qscore == 2) v = v + q->my_count;
+            else if(qscore == 3) d = d + q->my_count;
+        }
+        else if(!(q->q1.compare(tempTaxa)&&q->q2.compare(tempTaxa)&&q->q3.compare(tempTaxa)&&q->q4.compare(tempTaxa)))
+        {	qscore  = Check_Quartet(parta, partb, q, tempTaxa);
+            //l = q->status.length();
+            c = q->status[0];
+            //cout<<"c = "<<c<<endl;
+            //  s s,  v v,  d d, s v, s d, v s, v d, d v , d s
+            if(c=='s' && qscore == 2) { s = s - q->my_count; v = v + q->my_count; } // s v
 
-			else if(c=='d' && qscore==6){d--;s++;} // d s
+            else if(c=='s' && qscore==3){ s = s - q->my_count; d = d + q->my_count;} // s d
 
-			else if(qscore==1)
-			{
-				if(c=='s') s--;
-				else if(c=='v') v--;
-				else if(c=='d') d--;
-			
-			}
-			else if(c=='b')
-			{
-				if(qscore==6) s++;
-				else if(qscore==2) v++;
-				else if(qscore==3) d++;
-			}
-					
-		}
-		//partitionScore += Check_Quartet(parta, partb, q, tempTaxa);
-		q = q->qnext;		
-	}
-	if(!tempTaxa.compare("NULL"))
-	{
-		noOfSat = s;
-		noOfVat = v;
-		noOfDef = d;
-		
-		//partitionScore = 12*s + 3*d - v;
-		
-		if(v!=0)
-			dps = s/v;
-		else dps = s;
-		if(d!=0)
-			dps1 = s/d;
-		else dps1 = s;
-		//partitionScore = (s-v )+ dps; 
-		partitionScore = (s-v);
-	}
-	else
-	{
-		noOfSat = st+s;
-		noOfVat = vt+v;
-		noOfDef = df+d;
-		//partitionScore = 12*(st+s)+3*(df+d) - (vt+v);
-		
-		if((vt+v)!=0)
-			dps = (st+s)/(vt+v);
-		else dps = (st+s);
-		if((df+d)!=0)
-			dps1 = (st+s)/(df+d);
-		else dps1 = (st+s);
-		//partitionScore = ((st+s)-(vt+v))+ dps;
-		partitionScore = ((st+s)-(vt+v));
-	}
-	//partitionScore = ceil(dps);
-	
-	//dps = dps;	
+            else if(c=='v' && qscore == 6){v = v - q->my_count; s = s + q->my_count;} // v s
+
+            else if(c=='v' && qscore==3){v = v - q->my_count;d = d + q->my_count;}  // v d
+
+            else if(c=='d' && qscore==2){d = d - q->my_count;v = v + q->my_count;} // d v
+
+            else if(c=='d' && qscore==6){d = d - q->my_count;s = s + q->my_count;} // d s
+
+            else if(qscore==1)
+            {
+                if(c=='s') s = s - q->my_count;
+                else if(c=='v') v = v - q->my_count;
+                else if(c=='d') d = d - q->my_count;
+
+            }
+            else if(c=='b')
+            {
+                if(qscore==6) s = s + q->my_count;
+                else if(qscore==2) v = v + q->my_count;
+                else if(qscore==3) d = d + q->my_count;
+            }
+
+        }
+        //partitionScore += Check_Quartet(parta, partb, q, tempTaxa);
+        q = q->qnext;
+    }
+    if(!tempTaxa.compare("NULL"))
+    {
+        noOfSat = s;
+        noOfVat = v;
+        noOfDef = d;
+
+        //partitionScore = 12*s + 3*d - v;
+
+        if(v!=0)
+            dps = s/v;
+        else dps = s;
+        if(d!=0)
+            dps1 = s/d;
+        else dps1 = s;
+        //partitionScore = (s-v )+ dps;
+        partitionScore = (s-v);
+    }
+    else
+    {
+        noOfSat = st+s;
+        noOfVat = vt+v;
+        noOfDef = df+d;
+        //partitionScore = 12*(st+s)+3*(df+d) - (vt+v);
+
+        if((vt+v)!=0)
+            dps = (st+s)/(vt+v);
+        else dps = (st+s);
+        if((df+d)!=0)
+            dps1 = (st+s)/(df+d);
+        else dps1 = (st+s);
+        //partitionScore = ((st+s)-(vt+v))+ dps;
+        partitionScore = ((st+s)-(vt+v));
+    }
+    //partitionScore = ceil(dps);
+
+    //dps = dps;
 //	return dps;
-	//;
-	return partitionScore;
+    //;
+    return partitionScore;
 }
 int Count_Satisfied_Quartets(taxa *parta, taxa *partb, quartet *qt)
 {
@@ -857,65 +857,7 @@ taxa* FM(taxa* t, quartet* q)
 	int m,n, tag = 0;
 	if(doSort){
 	
-		Qt = q;
-		while(Qt->qnext!=NULL)
-        {
-            //Qtemp = Qt->qnext;
-            Qt  = Qt->qnext;
-            Qtemp = Qt;
-            //tag = 0;
-            while(Qtemp->qnext!=NULL)
-            {	m = 0; n = 0;
-                Qtemp = Qtemp->qnext;
-                if(Qt->quartet_id == Qtemp->quartet_id) continue;
-                //this following code will reduce counting space
-                if(!(Qt->q1.compare(Qtemp->q1)||Qt->q2.compare(Qtemp->q2))){
-                    m++;
-                    if(!(Qt->q3.compare(Qtemp->q3)||Qt->q4.compare(Qtemp->q4)))n++;
-                    else if(!(Qt->q3.compare(Qtemp->q4)||Qt->q4.compare(Qtemp->q3)))n++;
-
-                }
-                else if(!(Qt->q1.compare(Qtemp->q2)||Qt->q2.compare(Qtemp->q1))){
-                    m++;
-                    if(!(Qt->q3.compare(Qtemp->q3)||Qt->q4.compare(Qtemp->q4)))n++;
-                    else if(!(Qt->q3.compare(Qtemp->q4)||Qt->q4.compare(Qtemp->q3)))n++;
-
-                }
-                else if(!(Qt->q1.compare(Qtemp->q3)||Qt->q2.compare(Qtemp->q4))){
-                    m++;
-                    if(!(Qt->q3.compare(Qtemp->q1)||Qt->q4.compare(Qtemp->q2)))n++;
-                    else if(!(Qt->q3.compare(Qtemp->q2)||Qt->q4.compare(Qtemp->q1)))n++;
-
-                }
-                else if(!(Qt->q1.compare(Qtemp->q4)||Qt->q2.compare(Qtemp->q3))){
-                    m++;
-                    if(!(Qt->q3.compare(Qtemp->q1)||Qt->q4.compare(Qtemp->q2)))n++;
-                    else if(!(Qt->q3.compare(Qtemp->q2)||Qt->q4.compare(Qtemp->q1)))n++;
-
-                }
-
-
-//                if(!(Qt->q3.compare(Qtemp->q1)||Qt->q4.compare(Qtemp->q2)))n++;
-//                else if(!(Qt->q3.compare(Qtemp->q2)||Qt->q4.compare(Qtemp->q1)))n++;
-//                else if(!(Qt->q3.compare(Qtemp->q3)||Qt->q4.compare(Qtemp->q4)))n++;
-//                else if(!(Qt->q3.compare(Qtemp->q4)||Qt->q4.compare(Qtemp->q3)))n++;
-
-                if(n>0&&m>0)
-                {
-                    Qtemp->my_count++;
-                   // tag++;
-
-                    Qt->my_count++;
-                }
-
-
-            }
-//            if(tag!=0)Qt->my_count++;
-//            cout<<"tag= "<<tag<<endl;
-            //Qt->my_count = tag+1;
-
-        }
-
+		//counting will be done at readQuartet() function
 		// sort q by count
 		//Qt = q;
 		tag  = 1;
@@ -1139,13 +1081,13 @@ taxa* FM(taxa* t, quartet* q)
 void readQuartets()
 {
 	int count = 0, sk1,sk2,sk3,sk4, tcount=0;
-	quartet *temp, *loq;
-	taxa *tax,*lot, *l;
-	lot = listOftaxa;
-	string qt;
-	int found;
-	char buffer[100];
-	int length, len, start = 2;
+    quartet *temp, *loq, *Qtemp;
+    taxa *tax,*lot, *l;
+    lot = listOftaxa;
+    string qt;
+    int found;
+    char buffer[100];
+    int length, len, start = 2;
 
 	
 	loq = listOfquartet; // first element dummy listOfquartet->qnext == 1st quartet
@@ -1202,59 +1144,109 @@ void readQuartets()
 		if(!temp->q4.compare("0"))
 			temp->q4.assign("O");
 
-		loq->qnext = temp;
-		loq = loq->qnext;
+		Qtemp = listOfquartet;
+        int avail = 0;
+        while(Qtemp->qnext!=NULL)
+        {
+            avail = 0;
+            Qtemp = Qtemp->qnext;
 
-		sk1 = 0; sk2 = 0; sk3 = 0; sk4 = 0;
 
-		l = listOftaxa;	
-		while(l!=NULL)  
-		{		
-			if(l->name.compare(temp->q1)==0) sk1 = 1;
-			else if(l->name.compare(temp->q2)==0) sk2 = 1;
-			else if(l->name.compare(temp->q3)==0) sk3 = 1;
-			else if(l->name.compare(temp->q4)==0) sk4 = 1;
-			else{;}
-			l = l->tnext;
-		}
-		
-		if(sk1 == 0)
-		{	tax = new taxa();
-			tcount++;
-			tax->name.assign(temp->q1); 
-		/*	list *ql, *qlp;
-			ql = new list();
-			ql->val = temp->quartet_id;
-			qlp = tax->quartet_list;
-			while(qlp->next!=NULL)qlp = qlp->next;
-			qlp->next = ql;
+            if(!(temp->q1.compare(Qtemp->q1)||temp->q2.compare(Qtemp->q2))){
 
-			tax->quartet_list = */
-			lot->tnext = tax;
-			lot = lot->tnext;
-		}
-		if(sk2 == 0)
-		{	tax = new taxa();
-			tcount++;
-			tax->name.assign(temp->q2); 
-			lot->tnext = tax;
-			lot = lot->tnext;
-		}
-		if(sk3 == 0)
-		{	tax = new taxa();
-			tcount++;
-			tax->name.assign(temp->q3); 
-			lot->tnext = tax;
-			lot = lot->tnext;
-		}
-		if(sk4 == 0)
-		{	tax = new taxa();
-			tcount++;
-			tax->name.assign(temp->q4); 
-			lot->tnext = tax;
-			lot = lot->tnext;
-		}
+                if(!(temp->q3.compare(Qtemp->q3)||temp->q4.compare(Qtemp->q4))){
+                    avail++; Qtemp->my_count++; break;}
+                else if(!(temp->q3.compare(Qtemp->q4)||temp->q4.compare(Qtemp->q3))){
+                    avail++; Qtemp->my_count++;break;}
 
+            }
+            else if(!(temp->q1.compare(Qtemp->q2)||temp->q2.compare(Qtemp->q1))){
+
+                if(!(temp->q3.compare(Qtemp->q3)||temp->q4.compare(Qtemp->q4))){
+                    avail++;  Qtemp->my_count++; break;}
+                else if(!(temp->q3.compare(Qtemp->q4)||temp->q4.compare(Qtemp->q3))){
+                    avail++;  Qtemp->my_count++; break;}
+
+            }
+            else if(!(temp->q1.compare(Qtemp->q3)||temp->q2.compare(Qtemp->q4))){
+
+                if(!(temp->q3.compare(Qtemp->q1)||temp->q4.compare(Qtemp->q2))){
+                    avail++; Qtemp->my_count++; break;}
+                else if(!(temp->q3.compare(Qtemp->q2)||temp->q4.compare(Qtemp->q1))){
+                    avail++; Qtemp->my_count++; break;}
+
+            }
+            else if(!(temp->q1.compare(Qtemp->q4)||temp->q2.compare(Qtemp->q3))){
+
+                if(!(temp->q3.compare(Qtemp->q1)||temp->q4.compare(Qtemp->q2))){
+                    avail++;  Qtemp->my_count++; break;}
+                else if(!(temp->q3.compare(Qtemp->q2)||temp->q4.compare(Qtemp->q1))){
+                    avail++;  Qtemp->my_count++; break;}
+
+            }
+
+
+
+
+        }
+
+        if (avail == 0) {
+            count++;
+            temp->quartet_id = count;
+            loq->qnext = temp;
+            loq = loq->qnext;
+
+            sk1 = 0;
+            sk2 = 0;
+            sk3 = 0;
+            sk4 = 0;
+            l = listOftaxa;
+            while (l != NULL) {
+                if (l->name.compare(temp->q1) == 0) sk1 = 1;
+                else if (l->name.compare(temp->q2) == 0) sk2 = 1;
+                else if (l->name.compare(temp->q3) == 0) sk3 = 1;
+                else if (l->name.compare(temp->q4) == 0) sk4 = 1;
+                else { ; }
+                l = l->tnext;
+            }
+
+            if (sk1 == 0) {
+                tax = new taxa();
+                tcount++;
+                tax->name.assign(temp->q1);
+                /*	list *ql, *qlp;
+                    ql = new list();
+                    ql->val = temp->quartet_id;
+                    qlp = tax->quartet_list;
+                    while(qlp->next!=NULL)qlp = qlp->next;
+                    qlp->next = ql;
+
+                    tax->quartet_list = */
+                lot->tnext = tax;
+                lot = lot->tnext;
+            }
+            if (sk2 == 0) {
+                tax = new taxa();
+                tcount++;
+                tax->name.assign(temp->q2);
+                lot->tnext = tax;
+                lot = lot->tnext;
+            }
+            if (sk3 == 0) {
+                tax = new taxa();
+                tcount++;
+                tax->name.assign(temp->q3);
+                lot->tnext = tax;
+                lot = lot->tnext;
+            }
+            if (sk4 == 0) {
+                tax = new taxa();
+                tcount++;
+                tax->name.assign(temp->q4);
+                lot->tnext = tax;
+                lot = lot->tnext;
+            }
+        }
 		qt = "";
 		cin >> qt;
 	}
